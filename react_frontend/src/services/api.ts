@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
+import { AUTH_TOKEN_KEY, AUTH_HEADER_PREFIX } from '../constants/auth';
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
@@ -8,10 +9,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
+  (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${AUTH_HEADER_PREFIX}${token}`;
     }
     return config;
   },
@@ -24,7 +25,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem(AUTH_TOKEN_KEY);
       window.location.href = '/login';
     }
     return Promise.reject(error);
