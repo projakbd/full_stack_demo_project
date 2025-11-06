@@ -6,6 +6,6 @@ router
   .group(() => {
     router.post('/register', [AuthController, 'register'])
     router.post('/login', [AuthController, 'login'])
-    router.post('/logout', [AuthController, 'login']).use(middleware.auth({ guards: ['jwt'] }))
+    router.post('/logout', [AuthController, 'logout']).use(middleware.auth({ guards: ['jwt'] }))
   })
   .prefix('api')

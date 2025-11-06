@@ -17,14 +17,7 @@ export const registerValidator = vine.compile(
 
 export const loginValidator = vine.compile(
   vine.object({
-    email: vine
-      .string()
-      .trim()
-      .email()
-      .unique(async (db, value) => {
-        const user = await db.from('users').where('email', value).first()
-        return !user
-      }),
+    email: vine.string().trim().email(),
     password: vine.string().trim().minLength(8),
   })
 )
