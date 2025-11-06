@@ -11,9 +11,13 @@ export default class AuthController {
       const token = await auth.use('jwt').generate(user)
 
       return response.created({
-        user: user.serialize(),
-        token: {
-          ...token,
+        success: true,
+        message: 'Registration successful',
+        data: {
+          user: user.serialize(),
+          token: {
+            ...token,
+          },
         },
       })
     } catch (error) {
@@ -29,7 +33,14 @@ export default class AuthController {
       const token = await auth.use('jwt').generate(user)
 
       return response.ok({
-        ...token,
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: user.serialize(),
+          token: {
+            ...token,
+          },
+        },
       })
     } catch (error) {
       return response.unauthorized('Invalid credentials')
