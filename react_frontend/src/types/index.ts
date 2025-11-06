@@ -54,3 +54,39 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   loading: boolean;
 }
+
+export interface DashboardStat {
+  id: number;
+  title: string;
+  value: number;
+  category: string;
+  created_at?: string;
+}
+
+export interface RecentActivity {
+  action: string;
+  timestamp: string;
+}
+
+export interface DashboardData {
+  welcomeMessage: string;
+  stats: DashboardStat[];
+  recentActivity: RecentActivity[];
+}
+
+export interface ApiResponse<T> {
+  status: string;
+  message?: string;
+  data: T;
+}
+
+export interface TestApiResponse {
+  status: string;
+  message: string;
+  received: {
+    message: string;
+    data: unknown;
+    authenticatedUser: string;
+    timestamp: string;
+  };
+}
