@@ -38,7 +38,12 @@ const Dashboard: React.FC = () => {
     try {
       const response = await api.post<TestApiResponse>('/api/test', {
         message: 'Hello from React frontend!',
-        data: { test: true, random: Math.random() }
+        data: { 
+            test: true, random: Math.random(),          
+            appName: import.meta.env.VITE_APP_NAME,
+            appVersion: import.meta.env.VITE_APP_VERSION,
+            environment: import.meta.env.VITE_APP_ENV 
+        }
       });
       setTestResult(response.data);
     } catch  {
@@ -60,7 +65,7 @@ const Dashboard: React.FC = () => {
   const handleHealthCheck = async (): Promise<void> => {
     try {
       const response = await api.get<ApiResponse<{ message: string; timestamp: string }>>('/api/health');
-      alert(`Health Check: ${response.data.message}`);
+      alert(`Health Check: ${response.data.data.message}\nEnvironment: ${import.meta.env.VITE_APP_ENV}`);
     } catch {
       alert('Health check failed');
     }
@@ -74,8 +79,8 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <header className="dashboard-header">
         <div>
-          <h1>Dashboard</h1>
-          <p>Welcome back, {user?.fullName || user?.email}!</p>
+          <h1>Dashboard - {import.meta.env.VITE_APP_NAME}</h1>
+          <p>Welcome back, {user?.fullName || user?.email}! | v{import.meta.env.VITE_APP_VERSION}</p>
         </div>
         <button onClick={handleLogout} className="logout-button">
           Logout

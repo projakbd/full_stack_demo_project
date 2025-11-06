@@ -1,19 +1,24 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
-import { AUTH_TOKEN_KEY, AUTH_HEADER_PREFIX } from '../constants/auth';
 
 const api: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333',
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const token = localStorage.getItem('authToken');
     if (token) {
-      config.headers.Authorization = `${AUTH_HEADER_PREFIX}${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    if (import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true') {
+      console.log('API Request:', config.method?.toUpperCase(), config.url);
+    }
+    
     return config;
   },
   (error) => {
@@ -22,12 +27,22 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true') {
+      console.log('API Response:', response.status, response.config.url);
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem('authToken');
       window.location.href = '/login';
     }
+    
+    if (import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true') {
+      console.error('API Error:', error.response?.status, error.config?.url, error.response?.data);
+    }
+    
     return Promise.reject(error);
   }
 );
